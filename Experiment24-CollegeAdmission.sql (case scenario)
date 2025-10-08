@@ -1,0 +1,35 @@
+-- Experiment24-CollegeAdmission.sql
+USE dbms_lab;
+
+CREATE TABLE applicant (
+  app_id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(150),
+  dob DATE,
+  email VARCHAR(150),
+  score DECIMAL(5,2)
+);
+
+CREATE TABLE program (
+  prog_id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(100),
+  seats INT
+);
+
+CREATE TABLE application (
+  application_id INT PRIMARY KEY AUTO_INCREMENT,
+  app_id INT,
+  prog_id INT,
+  applied_on DATE,
+  status VARCHAR(20) DEFAULT 'PENDING',
+  FOREIGN KEY(app_id) REFERENCES applicant(app_id),
+  FOREIGN KEY(prog_id) REFERENCES program(prog_id)
+);
+
+-- Admit highest scored applicants upto seats:
+-- Example query: shortlist top N per program
+SELECT a.app_id, a.name, ap.prog_id, a.score
+FROM applicant a
+JOIN application ap ON a.app_id = ap.app_id
+WHERE ap.prog_id = 1
+ORDER BY a.score DESC
+LIMIT (SELECT seats FROM program WHERE prog_id=1);
