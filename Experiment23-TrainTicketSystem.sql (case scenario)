@@ -1,0 +1,40 @@
+-- Experiment23-TrainTicketSystem.sql
+USE dbms_lab;
+
+CREATE TABLE train (
+  train_id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(100),
+  total_seats INT
+);
+
+CREATE TABLE schedule (
+  sched_id INT PRIMARY KEY AUTO_INCREMENT,
+  train_id INT,
+  origin VARCHAR(50),
+  destination VARCHAR(50),
+  travel_date DATE,
+  fare DECIMAL(8,2),
+  FOREIGN KEY(train_id) REFERENCES train(train_id)
+);
+
+CREATE TABLE ticket (
+  ticket_id INT PRIMARY KEY AUTO_INCREMENT,
+  sched_id INT,
+  passenger_name VARCHAR(100),
+  seat_no INT,
+  status VARCHAR(20) DEFAULT 'BOOKED',
+  FOREIGN KEY(sched_id) REFERENCES schedule(sched_id)
+);
+
+-- Sample queries:
+INSERT INTO train (name,total_seats) VALUES ('Express A',100);
+INSERT INTO schedule(train_id,origin,destination,travel_date,fare) VALUES (1,'CityX','CityY','2025-12-01',499.00);
+
+-- Book ticket: check seat count and then insert
+INSERT INTO ticket(sched_id,passenger_name,seat_no) VALUES (1,'John Doe',1);
+
+-- Get tickets for a passenger via social network (example)
+SELECT t.ticket_id, s.travel_date, tr.name, t.seat_no
+FROM ticket t JOIN schedule s ON t.sched_id = s.sched_id
+JOIN train tr ON s.train_id = tr.train_id
+WHERE t.passenger_name = 'John Doe';
